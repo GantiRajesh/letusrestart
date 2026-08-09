@@ -11,7 +11,7 @@ export const regions = { au };
 
 /** Shown greyed-out in the country picker so users know what's planned. */
 export const COMING_SOON = [
-  { id: 'ca', fullName: 'UK', flag: 'uk' },
+  { id: 'ca', fullName: 'UK', flag: 'gb' },
   { id: 'ca', fullName: 'Canada', flag: '🇨🇦' },
   { id: 'nz', fullName: 'New Zealand', flag: '🇳🇿' },
   { id: 'ie', fullName: 'Ireland', flag: '🇮🇪' },
@@ -32,7 +32,7 @@ export function detectRegion() {
     const locale = (navigator.language || '').toLowerCase();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
     if (locale.endsWith('-au') || tz.startsWith('Australia/')) return 'au';
-    if (locale.endsWith('-gb') || tz === 'Europe/London') return 'uk';
+    /*if (locale.endsWith('-gb') || tz === 'Europe/London') return 'uk';*/
   } catch {
     /* fall through */
   }
