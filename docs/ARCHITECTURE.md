@@ -2,65 +2,64 @@
 
 ## Principles
 
-The whole design follows five rules, each traceable to the product brief:
+1. **Jurisdiction is data, not code.** Every legal rule, tax figure, deadline, glossary term, checklist item and support service lives in a per-country JSON file with a shared schema (`src/regions/`). The wizard, calculators, checklist, glossary and directory are generic components that render whatever the active region contains. Adding a country that fits an existing calculation model requires zero component changes.
+2. **Every element is independent.** Pages never import each other. Each feature owns its route and its own storage keys, and reads shared state only through narrow interfaces: `RegionContext` (which country), `ThemeContext` (light/dark), `lib/storage` (on-device persistence). Any feature can be rewritten or removed without touching the others.
+3. **Config over code for everything an owner changes.** Brand and both theme palettes → `src/config/brand.js`. Every revenue switch → `src/config/monetisation.js`. Partners → `src/data/partners.json`. See docs/OWNERS-MANUAL.md for the full change map.
+4. **Non-negotiables are enforced in code.** AdSlot refuses to render on protected routes; free directory entries always sort before partners; only partner-flagged links carry referral tracking; the AI review backend re-verifies the access code on every request.
+5. **Static-first, backend where it must be.** The core site is static files: nothing to breach, free to host, fast everywhere. The only backend is three small serverless functions for the paid AI review, and they are stateless (signed, self-expiring access codes; documents held in memory per-request only).
 
-1. **Jurisdiction is data, not code.** Every legal rule, glossary term, checklist item, and support service lives in a per-country JSON file with a shared schema. The calculator, triage, checklist, glossary, and directory are generic components that render whatever the active region file contains. Adding a country never means touching component code.
-2. **Every element is independent.** Pages never import each other. Each feature owns its own route, its own storage keys, and reads shared state only through two narrow interfaces: `RegionContext` (which country) and `lib/storage` (on-device persistence). Any feature can be rewritten, removed, or extracted to a microservice later without touching the others.
-3. **Config over code for everything a non-developer might change.** Brand (name, colours, radius) → `src/config/brand.js`. Revenue → `src/config/monetisation.js`. Both are applied at runtime, so re-theming or flipping a revenue stream is a one-file edit.
-4. **Non-negotiables are enforced in code.** The "no ads on vulnerable pages" rule isn't a comment — `AdSlot` checks the route against `AD_PROTECTED_ROUTES` and returns null. Free directory entries sort above paid ones in `Directory.jsx` unconditionally.
-5. **Client-only until it can't be.** The MVP has no backend at all: nothing to breach, nothing to maintain, free to host, fast everywhere. The seams where a backend will later attach are explicit (below).
+## Layout
+
+```
+rebound/
+├── index.html · vite.config.js · vercel.json · public/_redirects · public/
+├── .env.example · .gitignore
+├── api/                        # serverless functions (AI review only)
+│   ├── _code.js                #   HMAC access codes: issue + verify, stateless
+│   ├── validate-code.js        #   POST {code,email} → ok/expiry
+│   ├── issue-code.js           #   Stripe webhook → code → Resend email
+│   └── review.js               #   auth'd document analysis via Claude API
+├── docs/                       # OWNERS-MANUAL, GOING-LIVE, this file, etc.
+└── src/
+    ├── main.jsx · App.jsx      # entry, routes
+    ├── config/
+    │   ├── brand.js            # name, tagline, light+dark palettes
+    │   └── monetisation.js     # ads, services, aiReview, forms, referral, partners flags
+    ├── regions/
+    │   ├── index.js            # registry, COMING_SOON, auto-detection
+    │   └── au.json · uk.json   # rules, payoutTax, deadline, checklist, glossary, directory
+    ├── data/partners.json      # partner network (types + entries)
+    ├── lib/
+    │   ├── entitlements.js     # calculation engine (service-bands / age-multiplier models)
+    │   ├── storage.js          # namespaced localStorage wrapper (one-call erase)
+    │   ├── submit.js           # form POST with honest local fallback
+    │   └── referral.js         # tracked partner links (+ per-device click log)
+    ├── context/                # RegionContext, ThemeContext
+    ├── components/             # Layout, RegionPicker, StepForm, AdSlot
+    ├── pages/                  # Home, Plan, Tools, Checklist, Glossary,
+    │                           # Directory, Services, Review, Talk, Reset, About
+    └── styles/global.css       # all styling, driven by CSS variables
+```
 
 ## Data flow
 
-```
-region JSON (au.json, uk.json)
-        │
-regions/index.js  (registry + locale/timezone auto-detect)
-        │
-RegionContext  (active region + user override, persisted)
-        │
-┌───────┼──────────┬───────────┬───────────┬────────────┐
-Calculator      Checklist    Glossary    Directory    Footer/Disclaimer
-(entitlements    (filtered    (search)    (filter +    (source + lastChecked
- engine reads     by triage               free-first)   surfaced to user)
- rules)           tags)
-```
+Region JSON → `RegionContext` → every page. `lib/entitlements.js` is the one shared "smart" module: two calculation models (`service-bands` AU-style, `age-multiplier` UK-style) behind one interface; a structurally different regime (US at-will, EU civil law) becomes a third model branch, and the UI never changes. The plan wizard writes its answers to storage; the checklist, calculators and home journey read them to personalise themselves.
 
-`lib/entitlements.js` is the only "smart" shared logic: a generic engine supporting two calculation models (`service-bands` for AU-style regimes, `age-multiplier` for UK-style). A new common-law country (Canada, NZ, Ireland) will almost certainly fit one of these two models → data-only addition. A structurally different regime (US at-will, EU civil-law) gets a new model branch behind the same interface — the UI never changes.
+## The paid AI review, end to end
 
-## Region file schema
-
-Each `src/regions/<id>.json` contains:
-
-| Key | Purpose |
-|---|---|
-| `id, name, flag, currency, currencySymbol, dateFormat` | Localisation |
-| `terminology` | Word choices injected into shared copy ("redundancy" vs "layoff", benefit names) |
-| `governance` | `source`, `sourceUrl`, `lastChecked`, `reviewer`, `changeLog[]` — surfaced in the UI footer and disclaimers |
-| `rules` | Notice bands, redundancy model + bands/multipliers, caps, exemptions, qualifying service |
-| `checklist[]` | Phased items with `tags` for triage personalisation |
-| `glossary[]` | term/definition pairs |
-| `directory[]` | Support services with `free` and `partner` flags |
-
-## State & persistence
-
-All user state is on-device via `lib/storage.js` (namespaced localStorage): region override, triage result + tags, calculator-used flag, checklist progress. `clearAll()` powers the one-click erase button on `/about`. When accounts arrive, `storage.js` is the single seam to swap for an API-backed store — feature code doesn't change.
+Buyer pays via Stripe Payment Link → Stripe webhook hits `api/issue-code.js` → a code is issued that *is* its own record (expiry + email-hash + HMAC signature; no database) → Resend emails code + unlock link → visitor unlocks `/review` (validated by `api/validate-code.js`) → uploads documents → `api/review.js` re-verifies the code, sends text to the Claude API, returns the structured analysis, retains nothing. Demo mode (config) lets the whole flow be tested with a fixed code and sample output before any of this is connected.
 
 ## Expansion seams (to-be state)
 
 | Future feature | Where it attaches |
 |---|---|
-| Accounts & saved progress | Replace `lib/storage.js` internals with API sync; add auth provider around `App` |
-| Document vault | New route + backend service; never store documents client-side beyond upload |
-| AI companion | New route; grounded retrieval over the same region JSON content (the content model is already structured for it) |
-| Timeline & reminders | Derive dates from calculator/triage inputs already captured; add notification service |
-| Career tools / community / marketplace / B2B sibling | Each is a new route bundle + its own backend; the region registry, brand config, and monetisation flags are already shared infrastructure |
-| Multi-language | Wrap copy in an i18n layer; region files already separate *jurisdiction* from *language*, which is the hard part |
+| Accounts & saved progress | Swap `lib/storage.js` internals for an API-backed store; add auth provider around `App` |
+| Document vault | New route + storage service; requirements in docs/SECURITY.md |
+| Grounded AI companion | The region JSON content model is already retrieval-ready |
+| Reminders/timeline | Dates already captured by the key-dates calculator |
+| Community, marketplace, B2B sibling, white-label | New route bundles; region data, brand config and monetisation flags are the shared substrate |
+| Multi-language | Wrap page copy in an i18n layer; jurisdiction and language are already separated |
 
 ## Tech choices
 
-- **React 18 + Vite** — mainstream, fast builds, easy hiring, no lock-in.
-- **react-router-dom** — client routing; hosts get SPA rewrites via `vercel.json` / `_redirects`.
-- **No CSS framework** — one `global.css` driven by CSS variables from `brand.js`. Nothing to fight when customising; trivially replaceable with Tailwind later if the team prefers.
-- **No state library** — context + localStorage is sufficient at this scale; introduce one only when accounts land.
-- **Zero third-party runtime services** — no fonts CDN, no analytics, no trackers. Privacy is a feature.
+React 18 + Vite, react-router-dom, no CSS framework (one variable-driven stylesheet), no state library, no runtime third-party services in the front end. Three runtime dependencies total; `api/` additionally uses `stripe` (webhook verification) when the review goes live.

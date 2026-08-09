@@ -1,78 +1,51 @@
-# Rebound — from job loss to what's next
+# Rebound
 
-A calm, plain-English, interactive companion for anyone who has lost a job — through redundancy, layoff, contract end, or forced resignation. It guides people from the moment of shock through to re-employment: what's happening, what they're legally owed wherever they are, and what to do next, in the right order.
+Clear guidance from job loss to your next role. A calm, plain-English platform that tells anyone who has lost a job what happened, what they are legally owed where they live, and what to do next, in the right order.
 
 ## Quick start
 
 ```bash
 npm install
-npm run dev        # local dev server at http://localhost:5173
+npm run dev        # local site at http://localhost:5173
 npm run build      # production build → dist/
-npm run preview    # preview the production build locally
+npm run preview    # preview the production build
 ```
 
-Requires Node.js 18+.
+Requires Node.js 18+. The whole site runs with no backend; the optional AI review backend lives in `api/` and activates only when deployed with environment variables (see `.env.example`).
 
-## What's in the MVP
+## What's in the platform
 
 | Feature | Route | Notes |
 |---|---|---|
-| Interactive journey map | `/` | 6-stage clickable map; stages light up as the user progresses |
-| Plan wizard | `/plan` | One guided flow: situation triage, "is this genuine?" sniff test, and the money questions. Ends in a personal plan: verdict, animated entitlement figures, deadline warnings, next moves. Fully data-driven from the region ruleset (AU service-bands, UK age-multiplier). `/triage` and `/calculator` redirect here. |
-| Personalised checklist | `/checklist` | Phased (48h / week / month / forward), progress ring, deadline tags, saved on-device |
-| Jargon buster | `/glossary` | Searchable accordion, per-region terminology |
-| Support directory | `/directory` | Verified free services first, category filters |
-| Emotional reset | `/reset` | Breathing exercise, grounded reassurance, crisis contacts |
-| Region switching | header | AU/UK pill toggle. Auto-detected from browser locale/timezone, always user-overridable, persisted |
+| Home | `/` | Hero, one-tap chat starter, six-step journey map |
+| Plan wizard | `/plan` | Situation triage, genuineness check, entitlements, deadline warning, budget runway, next steps. Every outcome links to official government sources. |
+| Calculators | `/tools` | Owed vs offered · Key dates timeline · Runway · Payout tax and in-hand |
+| Checklist | `/checklist` | Phased (48h / week / month / forward), personalised by plan answers, deadline tags |
+| Glossary | `/glossary` | Searchable plain-English terms per region |
+| Support directory | `/directory` | Verified free services first; category filters; callback banner |
+| Services | `/services` | Paid offerings (Stripe payment links), partner network, partner application |
+| AI document review | `/review` | Paid, passcode-gated, session-only document analysis + email drafting |
+| Request a callback | `/talk` | One-question-per-screen form, consent step, delivered via form endpoint |
+| Wellbeing | `/reset` | Breathing exercise, grounded reassurance, crisis contacts |
+| About & privacy | `/about` | Promises, data erase button, disclaimers |
 
-UI: dark, modern theme (violet/teal gradient on deep navy) inspired by the sackedmate.com direction. Fully responsive: desktop nav, tablet grids, mobile burger menu, thumb-sized touch targets.
+Regions: **Australia** and **United Kingdom**, each a single sourced and dated data file. Country picker scales to any number of regions. Light and dark themes, fully responsive, professional solid-colour design.
 
-Regions shipped: **Australia** and **United Kingdom** — each a single JSON file with sourced, dated rules.
-
-## Project structure
-
-```
-rebound/
-├── index.html
-├── package.json / vite.config.js
-├── vercel.json / public/_redirects     # SPA routing + security headers for hosts
-├── docs/                               # all guides (see below)
-└── src/
-    ├── main.jsx / App.jsx              # entry + routing + theme injection
-    ├── config/
-    │   ├── brand.js                    # ← rename/re-theme the entire site here
-    │   └── monetisation.js             # ← all revenue streams + feature flags
-    ├── regions/
-    │   ├── index.js                    # region registry + auto-detection
-    │   ├── au.json / uk.json           # per-country rules, glossary, directory, checklist
-    ├── data/triage.js                  # shared decision tree
-    ├── lib/
-    │   ├── entitlements.js             # generic calculation engine (data-driven)
-    │   └── storage.js                  # namespaced localStorage wrapper
-    ├── context/RegionContext.jsx
-    ├── components/                     # Layout, JourneyMap, AdSlot, Disclaimer
-    ├── pages/                          # one file per route — fully independent
-    └── styles/global.css               # all styling via CSS variables
-```
-
-Every element is independent by design: pages don't import each other, features read only from the region context and their own storage keys, and all legal content lives in data files — see `docs/ARCHITECTURE.md`.
+Monetisation, all config-driven and all optional: 7 ad slots with per-slot switches, tracked partner referrals, paid services via Stripe payment links, the AI review, sponsored placements, and affiliate disclosure. The plan, checklist, calculators and rights information are always free and ad-free, enforced in code.
 
 ## Documentation
 
-- `docs/ARCHITECTURE.md` — how it's built, why, and how it expands to the full to-be state
-- `docs/DEPLOYMENT.md` — step-by-step deployment to Vercel / Netlify / Cloudflare / GitHub Pages / any host
-- `docs/UPDATING.md` — making changes safely: content, regions, features, legal-figure updates
-- `docs/MONETISATION.md` — the revenue framework and how to switch each stream on
-- `docs/SECURITY.md` — security posture now and requirements for future phases
-- `docs/ROADMAP.md` — the path from this MVP to the full career-transition platform
+Start with **`docs/OWNERS-MANUAL.md`**: how to use the site, how to change any text or component, how to deploy, maintain and fix. The rest:
 
-## Non-negotiables (enforced, not just stated)
+- `docs/GOING-LIVE.md` — domain, hosting, forms, payments, AdSense, AI review backend, referrals
+- `docs/ARCHITECTURE.md` — how it's built and how it expands
+- `docs/UPDATING.md` — safe-change workflow and pre-deploy tests
+- `docs/MONETISATION.md` — the revenue playbook
+- `docs/SECURITY.md` — security posture and future requirements
+- `docs/ROADMAP.md` — the path to the full career-transition platform
 
-1. Core rights info and the calculator are always free — `AdSlot` refuses to render on those routes even if misplaced.
-2. Every legal claim carries `source`, `lastChecked`, and `reviewer` fields, surfaced in the UI.
-3. Data collection is minimal: no accounts, no analytics on answers, everything on-device, one-click erase.
-4. Calm, plain English throughout.
+## Before public launch (non-negotiable)
 
-## Status
-
-MVP scaffold — **legal rulesets are authored from official published sources but not yet reviewed by qualified local professionals**. Each region file carries `"reviewer": "UNREVIEWED"` until that happens. Do not launch publicly before review.
+1. Have the AU and UK rulesets reviewed by qualified local professionals and set `governance.reviewer` in `src/regions/*.json`. They ship marked `UNREVIEWED`.
+2. Spot-check the calculators against the official Fair Work and GOV.UK calculators on the live domain.
+3. Run the checklist at the end of `docs/GOING-LIVE.md`.

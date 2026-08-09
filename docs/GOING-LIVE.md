@@ -87,17 +87,29 @@ AdSense pays you directly: you connect your own bank account inside Google's das
 
 Realistic expectation: ads earn little until traffic grows. Treat it as validation, not income, at first.
 
-## Part 4b. Connect the callback and partner forms (10 minutes, free)
+## Part 4b. Connect the callback and partner forms (5 minutes, free)
 
 The "Request a callback" form and the partner application need somewhere to send
-submissions. The simplest option with no backend:
+submissions. Both arrive as emails to you. Two no-backend options:
 
-1. Create a free account at https://formspree.io and create a form. Copy its endpoint URL
-   (looks like `https://formspree.io/f/abcdwxyz`).
-2. Paste it into `src/config/monetisation.js` → `forms.endpoint`.
-3. Redeploy. Submissions now arrive in your Formspree dashboard and by email notification.
-4. Until the endpoint is set, the site stores submissions on the visitor's device and says so
-   honestly, so you never silently lose an enquiry.
+**Option A: Web3Forms (recommended; free, no account, unlimited-friendly).**
+1. Go to https://web3forms.com, enter the email address where you want responses, and click
+   Create Access Key. The key arrives in that inbox.
+2. Paste it into `src/config/monetisation.js` → `forms.accessKey`. Leave `forms.endpoint`
+   as `https://api.web3forms.com/submit`.
+3. Redeploy, submit a test callback on the live site, and check your inbox. Each email
+   contains every answer plus a `kind` field (callback request or partner application).
+4. Optional: in the Web3Forms dashboard you can add spam filtering, redirect rules, or
+   extra recipients. Keep the access key out of screenshots; anyone with it can send
+   email to your address (but cannot read anything).
+
+**Option B: Formspree (dashboard + email).**
+Create a form at https://formspree.io, paste its URL (`https://formspree.io/f/xxxx`) into
+`forms.endpoint`, and leave `accessKey` empty. Submissions arrive by email and are also
+listed in the Formspree dashboard. Free tier: 50 submissions/month.
+
+Until one is configured, the site stores submissions on the visitor's device and says so
+honestly, so you never silently lose an enquiry.
 
 Handling the data responsibly: callback requests contain names and phone numbers. Delete them
 once handled, and honour any deletion request. This is the first personal data the platform

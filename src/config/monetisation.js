@@ -67,13 +67,24 @@ export const monetisation = {
   },
 
   /**
-   * FORMS (callback requests + partner applications).
-   * Set `endpoint` to a form service URL (e.g. Formspree: create a free form
-   * at formspree.io and paste its endpoint). Until then, submissions are
-   * stored on the visitor's device and the UI says so honestly.
+   * FORMS (callback requests + partner applications) → your email inbox.
+   *
+   * Option A, Web3Forms (recommended: free, no account):
+   *   1. Go to https://web3forms.com and enter the email address where you
+   *      want to receive responses. Your access key arrives by email.
+   *   2. Paste it into `accessKey` below. Leave `endpoint` as is.
+   *   3. Redeploy. Every submission now arrives as an email to that address.
+   *
+   * Option B, Formspree (dashboard + email): create a form at formspree.io,
+   *   set `endpoint` to your form URL (https://formspree.io/f/xxxx) and
+   *   leave `accessKey` empty.
+   *
+   * Until one is configured, submissions are stored on the visitor's device
+   * and the UI says so honestly.
    */
   forms: {
-    endpoint: '',
+    endpoint: 'https://api.web3forms.com/submit',
+    accessKey: '8be586d6-213e-4749-9311-8a4bb9270a1e',
     callbackNotice: 'We will call you within one business day.'
   },
 

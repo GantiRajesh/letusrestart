@@ -3,24 +3,37 @@ import { load, save } from './storage';
 
 /**
  * Form submission with a graceful fallback.
- * - If a form endpoint is configured (config → forms.endpoint), the data is
- *   POSTed there as JSON (works with Formspree, Getform, Basin, or your own API).
- * - If not, the submission is stored on the device and the caller is told,
- *   so the UI can be honest that no one has received it yet.
- * Returns { ok, delivered } where delivered=false means demo/local mode.
+ * Works with Web3Forms (endpoint + accessKey), Formspree (endpoint only),
+ * or any API that accepts a JSON POST.
+ * If nothing is configured, the submission is stored on the device and the
+ * caller is told, so the UI can be honest that no one has received it yet.
+ * Returns { ok, delivered } where delivered=false means local-only mode.
  */
 export async function submitForm(kind, answers) {
-  const endpoint = monetisation.forms.endpoint;
-  const payload = { kind, ...answers, submittedAt: new Date().toISOString() };
+  const { endpoint, accessKey } = monetisation.forms;
+  const isWeb3Forms = (endpoint || '').includes('web3forms.com');
+  const configured = Boolean(endpoint) && (!isWeb3Forms || Boolean(accessKey));
 
-  if (endpoint) {
+  const payload = {
+    kind,
+    subject: `Rebound website: new ${kind === 'callback' ? 'callback request' : kind.replace('-', ' ')}`,
+    ...answers,
+    submittedAt: new Date().toISOString()
+  };
+  if (isWeb3Forms && accessKey) {
+    payload.access_key = accessKey;
+    payload.from_name = 'Rebound website';
+  }
+
+  if (configured) {
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload)
       });
-      return { ok: res.ok, delivered: res.ok };
+      const ok = res.ok;
+      return { ok, delivered: ok };
     } catch {
       return { ok: false, delivered: false };
     }

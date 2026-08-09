@@ -8,6 +8,16 @@
   ],
   "partners": [
     {
+      "id": "listening-tree",
+      "name": "Listening Tree Counselling",
+      "type": "counsellor",
+      "regions": ["au", "uk"],
+      "services": ["One-to-one counselling", "Unhurried, confidential conversations"],
+      "referralUrl": "http://listeningtreecounseling.com/",
+      "model": "free",
+      "status": "live"
+    },
+    {
       "id": "example-legal",
       "name": "Example Employment Law",
       "type": "solicitor",
