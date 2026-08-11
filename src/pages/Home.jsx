@@ -41,7 +41,7 @@ export default function Home() {
   return (
     <>
       <section className="hero">
-       zzz <!-- <div className="kicker">Free · No sign-up · {region.flag} {region.fullName}</div> -->
+        <!-- <div className="kicker">Free · No sign-up · {region.flag} {region.fullName}</div> -->
         <h1>
           Lost your job?
           <br />
@@ -61,11 +61,11 @@ export default function Home() {
             <Link className="btn ghost" to="/reset">I need a moment first</Link>
           )}
         </div>
-        <div className="stats-row">
+       <!-- <div className="stats-row">
           <div className="stat"><div className="v">2 min</div><div className="k">to a full plan</div></div>
           <div className="stat"><div className="v">$0</div><div className="k">for the essentials</div></div>
           <div className="stat"><div className="v">{Object.keys(regions).length}</div><div className="k">countries, more coming</div></div>
-        </div>
+        </div> -->
       </section>
 
       <section className="teaser-wrap">
