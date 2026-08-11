@@ -41,7 +41,7 @@ export default function Home() {
   return (
     <>
       <section className="hero">
-        <!-- <div className="kicker">Free · No sign-up · {region.flag} {region.fullName}</div> -->
+        
         <h1>
           Lost your job?
           <br />
