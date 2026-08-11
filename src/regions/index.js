@@ -11,7 +11,7 @@ export const regions = { au };
 
 /** Shown greyed-out in the country picker so users know what's planned. */
 export const COMING_SOON = [
-  { id: 'ca', fullName: 'UK', flag: 'gb' },
+  { id: 'ca', fullName: 'UK', flag: '🇬🇧' },
   { id: 'ca', fullName: 'Canada', flag: '🇨🇦' },
   { id: 'nz', fullName: 'New Zealand', flag: '🇳🇿' },
   { id: 'ie', fullName: 'Ireland', flag: '🇮🇪' },
