@@ -22,11 +22,11 @@ export const AD_ALLOWED_ROUTES = ['/', '/glossary', '/directory', '/about'];
 
 export const monetisation = {
   ads: {
-    enabled: false,             // MASTER SWITCH for Stream 1 (Google AdSense)
+    enabled: true,             // MASTER SWITCH for Stream 1 (Google AdSense)
     showPlaceholders: true,     // Show labelled empty panels before AdSense is connected,
                                 // so the layout is honest about where ads will live.
     provider: 'adsense',
-    clientId: '',               // e.g. 'ca-pub-XXXXXXXXXXXXXXXX'
+    clientId: 'ca-pub-1140217384450648',               // e.g. 'ca-pub-XXXXXXXXXXXXXXXX'
 
     // Every placement on the site. enabled: false removes that one placement.
     // adUnitId: the slot ID from AdSense → Ads → By ad unit.
