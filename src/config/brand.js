@@ -4,7 +4,7 @@
  * the footer and the choice persists. Applied as CSS variables at runtime.
  */
 export const brand = {
-  name: 'Let us Restart - Rebound',
+  name: 'Let us Restart',
   tagline: 'Clear guidance from job loss to your next role.',
   supportEmail: 'letusrestart@outlook.com',
   radius: '14px',
