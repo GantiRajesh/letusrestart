@@ -43,7 +43,7 @@ export default function Layout({ children }) {
       <header className="site-header">
         <div className="container">
           <div className="bar">
-            <Link to="/" className="logo">rebound</Link>
+            <Link to="/" className="logo">Let us Restart - Rebound</Link>
             <nav className="desktop" aria-label="Main navigation">{links()}</nav>
             <div className="hdr-right">
               <button className="region-btn" onClick={() => setPickerOpen(true)} aria-haspopup="dialog">
