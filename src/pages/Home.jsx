@@ -41,15 +41,15 @@ export default function Home() {
   return (
     <>
       <section className="hero">
-        
+        <div className="kicker">Free · No sign-up · {region.flag} {region.fullName}</div>
         <h1>
           Lost your job?
           <br />
           <span>Here's what to do next.</span>
         </h1>
         <p className="sub">
-          Answer a few simple questions and in about two minutes you'll know your minimum legal entitlements,
-          whether the situation was handled properly, and what could be your next steps.
+          Answer six questions. In about two minutes you'll know your minimum legal entitlements,
+          whether the redundancy was handled properly, and your next steps.
         </p>
         <div className="hero-ctas">
           <button className="btn" onClick={startWizard}>
@@ -65,7 +65,7 @@ export default function Home() {
           <div className="stat"><div className="v">2 min</div><div className="k">to a full plan</div></div>
           <div className="stat"><div className="v">$0</div><div className="k">for the essentials</div></div>
           <div className="stat"><div className="v">{Object.keys(regions).length}</div><div className="k">countries, more coming</div></div>
-        </div> 
+        </div>
       </section>
 
       <section className="teaser-wrap">
@@ -73,10 +73,8 @@ export default function Home() {
           <h2>Start with one question.</h2>
           <p>
             The plan works like a short conversation. Answer the first question here and continue
-            from there to answer a few simple set of questions that helps understand your situation and provide you with best possible next steps. 
+            from there. Nothing you enter leaves your device.
           </p>
-	  <p> Rest assured, Nothing you enter leaves your device.
-	  </p>
           <Link className="btn ghost small" to="/glossary">Or browse the glossary</Link>
         </div>
         <div className="phone">
