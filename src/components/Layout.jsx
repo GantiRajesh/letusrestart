@@ -43,7 +43,7 @@ export default function Layout({ children }) {
       <header className="site-header">
         <div className="container">
           <div className="bar">
-            <Link to="/" className="logo">Let us Restart</Link>
+            <Link to="/" className="logo">rebound</Link>
             <nav className="desktop" aria-label="Main navigation">{links()}</nav>
             <div className="hdr-right">
               <button className="region-btn" onClick={() => setPickerOpen(true)} aria-haspopup="dialog">
@@ -70,7 +70,8 @@ export default function Layout({ children }) {
             <div>
               <strong>{brand.name.toLowerCase()}</strong> · {brand.tagline}
               <br />
-              General information, not legal advice. The essentials are free.
+              General information, not legal advice. The essentials are free. Ads never appear in
+              the plan, checklist or wellbeing pages.
             </div>
             <div>
               <strong>{region.fullName} {region.flag}</strong> · rules checked {region.governance.lastChecked}
