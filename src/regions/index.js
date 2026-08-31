@@ -5,13 +5,12 @@
  * Nothing else changes. See docs/UPDATING.md → "Adding a new region".
  */
 import au from './au.json';
-/*import uk from './uk.json';*/
+import uk from './uk.json';
 
-export const regions = { au };
+export const regions = { au, uk };
 
 /** Shown greyed-out in the country picker so users know what's planned. */
 export const COMING_SOON = [
-  { id: 'ca', fullName: 'UK', flag: '🇬🇧' },
   { id: 'ca', fullName: 'Canada', flag: '🇨🇦' },
   { id: 'nz', fullName: 'New Zealand', flag: '🇳🇿' },
   { id: 'ie', fullName: 'Ireland', flag: '🇮🇪' },
@@ -32,7 +31,7 @@ export function detectRegion() {
     const locale = (navigator.language || '').toLowerCase();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
     if (locale.endsWith('-au') || tz.startsWith('Australia/')) return 'au';
-    /*if (locale.endsWith('-gb') || tz === 'Europe/London') return 'uk';*/
+    if (locale.endsWith('-gb') || tz === 'Europe/London') return 'uk';
   } catch {
     /* fall through */
   }

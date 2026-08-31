@@ -22,11 +22,11 @@ export const AD_ALLOWED_ROUTES = ['/', '/glossary', '/directory', '/about'];
 
 export const monetisation = {
   ads: {
-    enabled: true,             // MASTER SWITCH for Stream 1 (Google AdSense)
+    enabled: false,             // MASTER SWITCH for Stream 1 (Google AdSense)
     showPlaceholders: true,     // Show labelled empty panels before AdSense is connected,
                                 // so the layout is honest about where ads will live.
     provider: 'adsense',
-    clientId: 'ca-pub-1140217384450648',               // e.g. 'ca-pub-XXXXXXXXXXXXXXXX'
+    clientId: '',               // e.g. 'ca-pub-XXXXXXXXXXXXXXXX'
 
     // Every placement on the site. enabled: false removes that one placement.
     // adUnitId: the slot ID from AdSense → Ads → By ad unit.
@@ -84,7 +84,7 @@ export const monetisation = {
    */
   forms: {
     endpoint: 'https://api.web3forms.com/submit',
-    accessKey: '8be586d6-213e-4749-9311-8a4bb9270a1e',
+    accessKey: '',
     callbackNotice: 'We will call you within one business day.'
   },
 
